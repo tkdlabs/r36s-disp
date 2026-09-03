@@ -1,0 +1,25 @@
+{
+  "spec": 1,
+  "package": {
+    "id": "minimal-0001",
+    "date": "2026-09-03",
+    "generated_at": "2026-09-03T06:00:00Z",
+    "title": "Minimal edition"
+  },
+  "root": "intro",
+  "screens": {
+    "intro": {
+      "type": "image",
+      "image": "assets/intro.jpg",
+      "audio": "assets/intro.mp3",
+      "next": "menu"
+    },
+    "menu": {
+      "type": "menu",
+      "title": "Menu",
+      "items": [
+        {"label": "Back to intro", "goto": "intro"}
+      ]
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "spec": 1,
+  "root": "intro",
+  "screens": {
+    "intro": {
+      "type": "image",
+      "image": "assets/intro.jpg"
+    }
+  }
+}

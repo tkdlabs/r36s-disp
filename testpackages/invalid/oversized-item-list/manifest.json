@@ -1,0 +1,815 @@
+{
+  "spec": 1,
+  "root": "menu",
+  "screens": {
+    "menu": {
+      "type": "menu",
+      "items": [
+        {
+          "label": "item-0",
+          "action": "exit"
+        },
+        {
+          "label": "item-1",
+          "action": "exit"
+        },
+        {
+          "label": "item-2",
+          "action": "exit"
+        },
+        {
+          "label": "item-3",
+          "action": "exit"
+        },
+        {
+          "label": "item-4",
+          "action": "exit"
+        },
+        {
+          "label": "item-5",
+          "action": "exit"
+        },
+        {
+          "label": "item-6",
+          "action": "exit"
+        },
+        {
+          "label": "item-7",
+          "action": "exit"
+        },
+        {
+          "label": "item-8",
+          "action": "exit"
+        },
+        {
+          "label": "item-9",
+          "action": "exit"
+        },
+        {
+          "label": "item-10",
+          "action": "exit"
+        },
+        {
+          "label": "item-11",
+          "action": "exit"
+        },
+        {
+          "label": "item-12",
+          "action": "exit"
+        },
+        {
+          "label": "item-13",
+          "action": "exit"
+        },
+        {
+          "label": "item-14",
+          "action": "exit"
+        },
+        {
+          "label": "item-15",
+          "action": "exit"
+        },
+        {
+          "label": "item-16",
+          "action": "exit"
+        },
+        {
+          "label": "item-17",
+          "action": "exit"
+        },
+        {
+          "label": "item-18",
+          "action": "exit"
+        },
+        {
+          "label": "item-19",
+          "action": "exit"
+        },
+        {
+          "label": "item-20",
+          "action": "exit"
+        },
+        {
+          "label": "item-21",
+          "action": "exit"
+        },
+        {
+          "label": "item-22",
+          "action": "exit"
+        },
+        {
+          "label": "item-23",
+          "action": "exit"
+        },
+        {
+          "label": "item-24",
+          "action": "exit"
+        },
+        {
+          "label": "item-25",
+          "action": "exit"
+        },
+        {
+          "label": "item-26",
+          "action": "exit"
+        },
+        {
+          "label": "item-27",
+          "action": "exit"
+        },
+        {
+          "label": "item-28",
+          "action": "exit"
+        },
+        {
+          "label": "item-29",
+          "action": "exit"
+        },
+        {
+          "label": "item-30",
+          "action": "exit"
+        },
+        {
+          "label": "item-31",
+          "action": "exit"
+        },
+        {
+          "label": "item-32",
+          "action": "exit"
+        },
+        {
+          "label": "item-33",
+          "action": "exit"
+        },
+        {
+          "label": "item-34",
+          "action": "exit"
+        },
+        {
+          "label": "item-35",
+          "action": "exit"
+        },
+        {
+          "label": "item-36",
+          "action": "exit"
+        },
+        {
+          "label": "item-37",
+          "action": "exit"
+        },
+        {
+          "label": "item-38",
+          "action": "exit"
+        },
+        {
+          "label": "item-39",
+          "action": "exit"
+        },
+        {
+          "label": "item-40",
+          "action": "exit"
+        },
+        {
+          "label": "item-41",
+          "action": "exit"
+        },
+        {
+          "label": "item-42",
+          "action": "exit"
+        },
+        {
+          "label": "item-43",
+          "action": "exit"
+        },
+        {
+          "label": "item-44",
+          "action": "exit"
+        },
+        {
+          "label": "item-45",
+          "action": "exit"
+        },
+        {
+          "label": "item-46",
+          "action": "exit"
+        },
+        {
+          "label": "item-47",
+          "action": "exit"
+        },
+        {
+          "label": "item-48",
+          "action": "exit"
+        },
+        {
+          "label": "item-49",
+          "action": "exit"
+        },
+        {
+          "label": "item-50",
+          "action": "exit"
+        },
+        {
+          "label": "item-51",
+          "action": "exit"
+        },
+        {
+          "label": "item-52",
+          "action": "exit"
+        },
+        {
+          "label": "item-53",
+          "action": "exit"
+        },
+        {
+          "label": "item-54",
+          "action": "exit"
+        },
+        {
+          "label": "item-55",
+          "action": "exit"
+        },
+        {
+          "label": "item-56",
+          "action": "exit"
+        },
+        {
+          "label": "item-57",
+          "action": "exit"
+        },
+        {
+          "label": "item-58",
+          "action": "exit"
+        },
+        {
+          "label": "item-59",
+          "action": "exit"
+        },
+        {
+          "label": "item-60",
+          "action": "exit"
+        },
+        {
+          "label": "item-61",
+          "action": "exit"
+        },
+        {
+          "label": "item-62",
+          "action": "exit"
+        },
+        {
+          "label": "item-63",
+          "action": "exit"
+        },
+        {
+          "label": "item-64",
+          "action": "exit"
+        },
+        {
+          "label": "item-65",
+          "action": "exit"
+        },
+        {
+          "label": "item-66",
+          "action": "exit"
+        },
+        {
+          "label": "item-67",
+          "action": "exit"
+        },
+        {
+          "label": "item-68",
+          "action": "exit"
+        },
+        {
+          "label": "item-69",
+          "action": "exit"
+        },
+        {
+          "label": "item-70",
+          "action": "exit"
+        },
+        {
+          "label": "item-71",
+          "action": "exit"
+        },
+        {
+          "label": "item-72",
+          "action": "exit"
+        },
+        {
+          "label": "item-73",
+          "action": "exit"
+        },
+        {
+          "label": "item-74",
+          "action": "exit"
+        },
+        {
+          "label": "item-75",
+          "action": "exit"
+        },
+        {
+          "label": "item-76",
+          "action": "exit"
+        },
+        {
+          "label": "item-77",
+          "action": "exit"
+        },
+        {
+          "label": "item-78",
+          "action": "exit"
+        },
+        {
+          "label": "item-79",
+          "action": "exit"
+        },
+        {
+          "label": "item-80",
+          "action": "exit"
+        },
+        {
+          "label": "item-81",
+          "action": "exit"
+        },
+        {
+          "label": "item-82",
+          "action": "exit"
+        },
+        {
+          "label": "item-83",
+          "action": "exit"
+        },
+        {
+          "label": "item-84",
+          "action": "exit"
+        },
+        {
+          "label": "item-85",
+          "action": "exit"
+        },
+        {
+          "label": "item-86",
+          "action": "exit"
+        },
+        {
+          "label": "item-87",
+          "action": "exit"
+        },
+        {
+          "label": "item-88",
+          "action": "exit"
+        },
+        {
+          "label": "item-89",
+          "action": "exit"
+        },
+        {
+          "label": "item-90",
+          "action": "exit"
+        },
+        {
+          "label": "item-91",
+          "action": "exit"
+        },
+        {
+          "label": "item-92",
+          "action": "exit"
+        },
+        {
+          "label": "item-93",
+          "action": "exit"
+        },
+        {
+          "label": "item-94",
+          "action": "exit"
+        },
+        {
+          "label": "item-95",
+          "action": "exit"
+        },
+        {
+          "label": "item-96",
+          "action": "exit"
+        },
+        {
+          "label": "item-97",
+          "action": "exit"
+        },
+        {
+          "label": "item-98",
+          "action": "exit"
+        },
+        {
+          "label": "item-99",
+          "action": "exit"
+        },
+        {
+          "label": "item-100",
+          "action": "exit"
+        },
+        {
+          "label": "item-101",
+          "action": "exit"
+        },
+        {
+          "label": "item-102",
+          "action": "exit"
+        },
+        {
+          "label": "item-103",
+          "action": "exit"
+        },
+        {
+          "label": "item-104",
+          "action": "exit"
+        },
+        {
+          "label": "item-105",
+          "action": "exit"
+        },
+        {
+          "label": "item-106",
+          "action": "exit"
+        },
+        {
+          "label": "item-107",
+          "action": "exit"
+        },
+        {
+          "label": "item-108",
+          "action": "exit"
+        },
+        {
+          "label": "item-109",
+          "action": "exit"
+        },
+        {
+          "label": "item-110",
+          "action": "exit"
+        },
+        {
+          "label": "item-111",
+          "action": "exit"
+        },
+        {
+          "label": "item-112",
+          "action": "exit"
+        },
+        {
+          "label": "item-113",
+          "action": "exit"
+        },
+        {
+          "label": "item-114",
+          "action": "exit"
+        },
+        {
+          "label": "item-115",
+          "action": "exit"
+        },
+        {
+          "label": "item-116",
+          "action": "exit"
+        },
+        {
+          "label": "item-117",
+          "action": "exit"
+        },
+        {
+          "label": "item-118",
+          "action": "exit"
+        },
+        {
+          "label": "item-119",
+          "action": "exit"
+        },
+        {
+          "label": "item-120",
+          "action": "exit"
+        },
+        {
+          "label": "item-121",
+          "action": "exit"
+        },
+        {
+          "label": "item-122",
+          "action": "exit"
+        },
+        {
+          "label": "item-123",
+          "action": "exit"
+        },
+        {
+          "label": "item-124",
+          "action": "exit"
+        },
+        {
+          "label": "item-125",
+          "action": "exit"
+        },
+        {
+          "label": "item-126",
+          "action": "exit"
+        },
+        {
+          "label": "item-127",
+          "action": "exit"
+        },
+        {
+          "label": "item-128",
+          "action": "exit"
+        },
+        {
+          "label": "item-129",
+          "action": "exit"
+        },
+        {
+          "label": "item-130",
+          "action": "exit"
+        },
+        {
+          "label": "item-131",
+          "action": "exit"
+        },
+        {
+          "label": "item-132",
+          "action": "exit"
+        },
+        {
+          "label": "item-133",
+          "action": "exit"
+        },
+        {
+          "label": "item-134",
+          "action": "exit"
+        },
+        {
+          "label": "item-135",
+          "action": "exit"
+        },
+        {
+          "label": "item-136",
+          "action": "exit"
+        },
+        {
+          "label": "item-137",
+          "action": "exit"
+        },
+        {
+          "label": "item-138",
+          "action": "exit"
+        },
+        {
+          "label": "item-139",
+          "action": "exit"
+        },
+        {
+          "label": "item-140",
+          "action": "exit"
+        },
+        {
+          "label": "item-141",
+          "action": "exit"
+        },
+        {
+          "label": "item-142",
+          "action": "exit"
+        },
+        {
+          "label": "item-143",
+          "action": "exit"
+        },
+        {
+          "label": "item-144",
+          "action": "exit"
+        },
+        {
+          "label": "item-145",
+          "action": "exit"
+        },
+        {
+          "label": "item-146",
+          "action": "exit"
+        },
+        {
+          "label": "item-147",
+          "action": "exit"
+        },
+        {
+          "label": "item-148",
+          "action": "exit"
+        },
+        {
+          "label": "item-149",
+          "action": "exit"
+        },
+        {
+          "label": "item-150",
+          "action": "exit"
+        },
+        {
+          "label": "item-151",
+          "action": "exit"
+        },
+        {
+          "label": "item-152",
+          "action": "exit"
+        },
+        {
+          "label": "item-153",
+          "action": "exit"
+        },
+        {
+          "label": "item-154",
+          "action": "exit"
+        },
+        {
+          "label": "item-155",
+          "action": "exit"
+        },
+        {
+          "label": "item-156",
+          "action": "exit"
+        },
+        {
+          "label": "item-157",
+          "action": "exit"
+        },
+        {
+          "label": "item-158",
+          "action": "exit"
+        },
+        {
+          "label": "item-159",
+          "action": "exit"
+        },
+        {
+          "label": "item-160",
+          "action": "exit"
+        },
+        {
+          "label": "item-161",
+          "action": "exit"
+        },
+        {
+          "label": "item-162",
+          "action": "exit"
+        },
+        {
+          "label": "item-163",
+          "action": "exit"
+        },
+        {
+          "label": "item-164",
+          "action": "exit"
+        },
+        {
+          "label": "item-165",
+          "action": "exit"
+        },
+        {
+          "label": "item-166",
+          "action": "exit"
+        },
+        {
+          "label": "item-167",
+          "action": "exit"
+        },
+        {
+          "label": "item-168",
+          "action": "exit"
+        },
+        {
+          "label": "item-169",
+          "action": "exit"
+        },
+        {
+          "label": "item-170",
+          "action": "exit"
+        },
+        {
+          "label": "item-171",
+          "action": "exit"
+        },
+        {
+          "label": "item-172",
+          "action": "exit"
+        },
+        {
+          "label": "item-173",
+          "action": "exit"
+        },
+        {
+          "label": "item-174",
+          "action": "exit"
+        },
+        {
+          "label": "item-175",
+          "action": "exit"
+        },
+        {
+          "label": "item-176",
+          "action": "exit"
+        },
+        {
+          "label": "item-177",
+          "action": "exit"
+        },
+        {
+          "label": "item-178",
+          "action": "exit"
+        },
+        {
+          "label": "item-179",
+          "action": "exit"
+        },
+        {
+          "label": "item-180",
+          "action": "exit"
+        },
+        {
+          "label": "item-181",
+          "action": "exit"
+        },
+        {
+          "label": "item-182",
+          "action": "exit"
+        },
+        {
+          "label": "item-183",
+          "action": "exit"
+        },
+        {
+          "label": "item-184",
+          "action": "exit"
+        },
+        {
+          "label": "item-185",
+          "action": "exit"
+        },
+        {
+          "label": "item-186",
+          "action": "exit"
+        },
+        {
+          "label": "item-187",
+          "action": "exit"
+        },
+        {
+          "label": "item-188",
+          "action": "exit"
+        },
+        {
+          "label": "item-189",
+          "action": "exit"
+        },
+        {
+          "label": "item-190",
+          "action": "exit"
+        },
+        {
+          "label": "item-191",
+          "action": "exit"
+        },
+        {
+          "label": "item-192",
+          "action": "exit"
+        },
+        {
+          "label": "item-193",
+          "action": "exit"
+        },
+        {
+          "label": "item-194",
+          "action": "exit"
+        },
+        {
+          "label": "item-195",
+          "action": "exit"
+        },
+        {
+          "label": "item-196",
+          "action": "exit"
+        },
+        {
+          "label": "item-197",
+          "action": "exit"
+        },
+        {
+          "label": "item-198",
+          "action": "exit"
+        },
+        {
+          "label": "item-199",
+          "action": "exit"
+        },
+        {
+          "label": "item-200",
+          "action": "exit"
+        }
+      ]
+    }
+  }
+}
