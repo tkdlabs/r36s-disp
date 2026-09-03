@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cso]
+.venv/
+.pytest_cache/
+data/
+*.tmp
