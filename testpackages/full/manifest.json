@@ -1,0 +1,66 @@
+{
+  "spec": 1,
+  "package": {
+    "id": "full-0001",
+    "date": "2026-09-03",
+    "generated_at": "2026-09-03T06:00:00Z",
+    "title": "Full edition"
+  },
+  "root": "intro",
+  "theme": {},
+  "screens": {
+    "intro": {
+      "type": "image",
+      "image": "assets/intro.jpg",
+      "audio": "assets/intro.mp3",
+      "duration": 8,
+      "next": "menu"
+    },
+    "menu": {
+      "type": "menu",
+      "title": "Good morning",
+      "subtitle": "Thursday, 3 September",
+      "items": [
+        {"label": "Today's agenda", "sublabel": "2 events", "goto": "agenda"},
+        {"label": "On this day", "goto": "photo"},
+        {"label": "A short clip", "goto": "video"},
+        {"label": "Reading", "goto": "text"},
+        {"label": "Slideshow", "goto": "slideshow"}
+      ]
+    },
+    "agenda": {
+      "type": "list",
+      "title": "Today",
+      "items": [
+        {"text": "09:00  Standup", "detail": "Meet, 15 min"},
+        {"text": "13:00  Dentist"}
+      ]
+    },
+    "photo": {
+      "type": "image",
+      "image": "assets/photo.jpg",
+      "caption": "You, on this day",
+      "duration": 5,
+      "next": "menu"
+    },
+    "video": {
+      "type": "video",
+      "video": "assets/video.mp4",
+      "next": "menu"
+    },
+    "text": {
+      "type": "text",
+      "title": "Your day in words",
+      "body": "Line one.\nLine two.\nLine three."
+    },
+    "slideshow": {
+      "type": "slideshow",
+      "audio": "assets/music.mp3",
+      "slides": [
+        {"image": "assets/s1.jpg", "caption": "Slide one", "duration": 3},
+        {"image": "assets/s2.jpg", "duration": 3}
+      ],
+      "next": "menu"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "spec": 2,
+  "root": "menu",
+  "screens": {
+    "menu": {
+      "type": "menu",
+      "items": [
+        {"label": "Home", "action": "home"}
+      ]
+    }
+  }
+}
