@@ -5,6 +5,8 @@ logic it drives (:mod:`app.player.stack`, :mod:`screens`, :mod:`input`) is
 pure and unit-tested without pygame.
 """
 
+import os
+
 import pygame
 
 from app.player.audio import AudioManager
@@ -45,6 +47,7 @@ class Player:
         self._fade = None       # dict(t=..., duration=...)
         self._video_pending = False
         self._joy_dir = {}      # axis -> current direction from the stick
+        self._joysticks = []    # keep refs: GC would close the device
 
     # -- lifecycle -------------------------------------------------------
 
@@ -61,9 +64,12 @@ class Player:
         try:
             pygame.joystick.init()
             for i in range(pygame.joystick.get_count()):
-                pygame.joystick.Joystick(i).init()
-        except pygame.error:
-            pass
+                stick = pygame.joystick.Joystick(i)
+                stick.init()
+                self._joysticks.append(stick)
+            _joy_debug("joysticks: %d" % len(self._joysticks))
+        except pygame.error as exc:
+            _joy_debug("joystick init failed: %s" % exc)
 
         self.running = True
         self._enter(self.stack.current)
@@ -86,6 +92,7 @@ class Player:
                 if button:
                     self._apply(self.state.resolve(button))
             elif event.type == pygame.JOYBUTTONDOWN:
+                _joy_debug("joy button %d" % event.button)
                 button = button_for_joy(event.button)
                 if button:
                     self._apply(self.state.resolve(button))
@@ -94,6 +101,7 @@ class Player:
                 # Fire once per push: only when the engaged direction changes.
                 if self._joy_dir.get(event.axis) != button:
                     self._joy_dir[event.axis] = button
+                    _joy_debug("joy axis %d dir %s" % (event.axis, button))
                     if button:
                         self._apply(self.state.resolve(button))
 
@@ -226,6 +234,11 @@ class Player:
             parts.append(self.status)
         parts.append("FN/Esc: quit")
         return "   ".join(p for p in parts if p)
+
+
+def _joy_debug(message):
+    if os.environ.get("R36S_JOY_DEBUG"):
+        print(message, flush=True)
 
 
 def _key_name(key):
