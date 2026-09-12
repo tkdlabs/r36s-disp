@@ -56,8 +56,10 @@ uv pip install --python .venv/bin/python -r requirements-dev.txt
 
 ## Conventions
 
-- Python 3.8+ for anything that ships to the device; no new runtime deps
-  beyond `pygame` (device provides `python3-pygame` and `mpv`).
+- Python 3.7+ for anything that ships to the device (verified on the R36S:
+  3.7.5); no new runtime deps beyond `pygame` and `mpv` (see `deploy/`).
+- Device display is KMS/DRM (no X11); the pygame wheel's bundled SDL2 lacks
+  KMSDRM — `deploy/install.sh` repoints it at the system SDL2.
 - Target screen is 640×480; render to a logical surface and scale at runtime.
 - All network work is best-effort and must never crash the player.
 - Do not add code comments unless they earn their place; prefer docstrings.
