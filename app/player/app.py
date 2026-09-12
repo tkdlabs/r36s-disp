@@ -207,6 +207,7 @@ class Player:
             parts.append(str(date))
         if self.status:
             parts.append(self.status)
+        parts.append("FN/Esc: quit")
         return "   ".join(p for p in parts if p)
 
 

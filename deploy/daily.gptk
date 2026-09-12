@@ -17,7 +17,11 @@ r2 = r
 
 start = enter
 back = tab
+# Exit back to EmulationStation: FN/hotkey is button 15 (system_hk), which
+# gptokeyb exposes as r3 (and/or guide). Esc makes the player quit cleanly.
+r3 = esc
 guide = esc
+l3 = esc
 
 left_analog_up = up
 left_analog_down = down

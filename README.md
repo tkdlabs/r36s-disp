@@ -58,7 +58,8 @@ ssh root@<ip> 'chmod +x /roms/ports/daily.sh'
 Launcher: `/roms/ports/daily.sh` (ES Ports entry) runs
 `python3 -m app.main` from `/roms/ports/daily/` on KMSDRM. The R36S has no
 keyboard, so `gptokeyb` translates the GO-Super Gamepad into the keys
-`app/player/input.py` expects (mapping in `deploy/daily.gptk`).
+`app/player/input.py` expects (mapping in `deploy/daily.gptk`). Press **FN**
+(hotkey, button 15) to exit back to EmulationStation.
 
 Device quirks found in M4:
 - pygame's bundled SDL2 2.28.4 lacks the KMSDRM video driver; `install.sh`
