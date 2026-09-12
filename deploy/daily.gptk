@@ -1,0 +1,25 @@
+# Gamepad -> keyboard map for the R36S (GO-Super Gamepad) via gptokeyb.
+# Target keys match app/player/input.py KEYMAP.
+up = up
+down = down
+left = left
+right = right
+
+a = z
+b = x
+x = c
+y = v
+
+l1 = q
+l2 = w
+r1 = e
+r2 = r
+
+start = enter
+back = tab
+guide = esc
+
+left_analog_up = up
+left_analog_down = down
+left_analog_left = left
+left_analog_right = right

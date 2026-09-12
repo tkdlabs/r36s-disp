@@ -38,3 +38,31 @@ back to the built-in "No edition yet" notice.
 
 Desktop controls: arrows = D-pad, Z/X = A/B, C/V = X/Y, Q/E = L1/R1,
 Enter = Start, Tab = Select, Esc/FN = quit.
+
+## Device deploy (R36S, M4)
+
+Verified on ArkOS (RK3326, Ubuntu 19.10, Python 3.7.5), 2026-09-12. See
+also `../r36s/DEPLOYMENT.md` and `../r36s/BOOTSTRAP.md`.
+
+```sh
+# On the device (as root), once:
+bash deploy/install.sh            # pip install pygame==2.6.1 + mpv + SDL2 KMSDRM shim
+
+# From the dev machine:
+tar czf - -C . app | ssh root@<ip> 'rm -rf /roms/ports/daily/app && tar xzf - -C /roms/ports/daily/'
+tar czf - -C testpackages full | ssh root@<ip> 'mkdir -p /roms/ports/daily/testpackages && tar xzf - -C /roms/ports/daily/testpackages/'
+scp deploy/config.json deploy/daily.sh deploy/daily.gptk root@<ip>:/roms/ports/daily/
+ssh root@<ip> 'chmod +x /roms/ports/daily.sh'
+```
+
+Launcher: `/roms/ports/daily.sh` (ES Ports entry) runs
+`python3 -m app.main` from `/roms/ports/daily/` on KMSDRM. The R36S has no
+keyboard, so `gptokeyb` translates the GO-Super Gamepad into the keys
+`app/player/input.py` expects (mapping in `deploy/daily.gptk`).
+
+Device quirks found in M4:
+- pygame's bundled SDL2 2.28.4 lacks the KMSDRM video driver; `install.sh`
+  repoints it at the system SDL2 (2.30), which has it. No X11 on ArkOS.
+- `/roms` is exfat with `symlink=0`, so the spec's `data/current` symlink
+  can't be used; M4 uses `data/current/` as a real directory (#10).
+- ArkOS boots without an RTC; fix the clock before apt/pip (TLS).

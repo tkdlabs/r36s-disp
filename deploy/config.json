@@ -1,0 +1,5 @@
+{
+  "server_url": "http://10.0.0.1:8000",
+  "device_id": "r36s-001",
+  "max_retention_days": 7
+}
