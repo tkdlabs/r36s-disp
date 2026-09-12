@@ -51,19 +51,21 @@ bash deploy/install.sh            # pip install pygame==2.6.1 + mpv + SDL2 KMSDR
 # From the dev machine:
 tar czf - -C . app | ssh root@<ip> 'rm -rf /roms/ports/daily/app && tar xzf - -C /roms/ports/daily/'
 tar czf - -C testpackages full | ssh root@<ip> 'mkdir -p /roms/ports/daily/testpackages && tar xzf - -C /roms/ports/daily/testpackages/'
-scp deploy/config.json deploy/daily.sh deploy/daily.gptk root@<ip>:/roms/ports/daily/
+scp deploy/config.json deploy/daily.sh root@<ip>:/roms/ports/daily/
 ssh root@<ip> 'chmod +x /roms/ports/daily.sh'
 ```
 
 Launcher: `/roms/ports/daily.sh` (ES Ports entry) runs
 `python3 -m app.main` from `/roms/ports/daily/` on KMSDRM. The R36S has no
-keyboard, so `gptokeyb` translates the GO-Super Gamepad into the keys
-`app/player/input.py` expects (mapping in `deploy/daily.gptk`). Press **FN**
-(hotkey, button 15) to exit back to EmulationStation.
+keyboard, so the player reads the GO-Super Gamepad directly via pygame
+(button indices in `app/player/input.py` `JOYMAP`). Press **FN** (joystick
+button 16) to exit back to EmulationStation.
 
 Device quirks found in M4:
 - pygame's bundled SDL2 2.28.4 lacks the KMSDRM video driver; `install.sh`
   repoints it at the system SDL2 (2.30), which has it. No X11 on ArkOS.
+- The R36S FN/hotkey is joystick button **16** (ES reports `system_hk` as
+  15); `gptokeyb`/`oga_controls` don't see it, so input is read natively.
 - `/roms` is exfat with `symlink=0`, so the spec's `data/current` symlink
   can't be used; M4 uses `data/current/` as a real directory (#10).
 - ArkOS boots without an RTC; fix the clock before apt/pip (TLS).

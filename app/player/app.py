@@ -8,7 +8,7 @@ pure and unit-tested without pygame.
 import pygame
 
 from app.player.audio import AudioManager
-from app.player.input import button_for_key
+from app.player.input import button_for_joy, button_for_key, direction_for_axis
 from app.player.render import HEIGHT, WIDTH, Renderer
 from app.player.screens import ScreenState
 from app.player.stack import NavigationStack
@@ -44,6 +44,7 @@ class Player:
         self._prev_canvas = None
         self._fade = None       # dict(t=..., duration=...)
         self._video_pending = False
+        self._joy_dir = {}      # axis -> current direction from the stick
 
     # -- lifecycle -------------------------------------------------------
 
@@ -57,6 +58,12 @@ class Player:
         pygame.display.set_caption(self.package.title or "r36s-disp")
         self._clock = pygame.time.Clock()
         self.audio.init()
+        try:
+            pygame.joystick.init()
+            for i in range(pygame.joystick.get_count()):
+                pygame.joystick.Joystick(i).init()
+        except pygame.error:
+            pass
 
         self.running = True
         self._enter(self.stack.current)
@@ -75,10 +82,20 @@ class Player:
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
                     continue
-                name = _key_name(event.key)
-                button = button_for_key(name)
+                button = button_for_key(_key_name(event.key))
                 if button:
                     self._apply(self.state.resolve(button))
+            elif event.type == pygame.JOYBUTTONDOWN:
+                button = button_for_joy(event.button)
+                if button:
+                    self._apply(self.state.resolve(button))
+            elif event.type == pygame.JOYAXISMOTION:
+                button = direction_for_axis(event.axis, event.value)
+                # Fire once per push: only when the engaged direction changes.
+                if self._joy_dir.get(event.axis) != button:
+                    self._joy_dir[event.axis] = button
+                    if button:
+                        self._apply(self.state.resolve(button))
 
     def _step(self, dt):
         if not self.running:

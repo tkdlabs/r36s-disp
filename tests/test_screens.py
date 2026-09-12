@@ -1,5 +1,5 @@
 from app.manifest import LoadedPackage
-from app.player.input import button_for_key
+from app.player.input import button_for_joy, button_for_key, direction_for_axis
 from app.player.screens import Action, ScreenState
 
 
@@ -135,3 +135,22 @@ def test_button_for_key():
     assert button_for_key("RETURN") == "start"
     assert button_for_key("f1") is None
     assert button_for_key(None) is None
+
+
+def test_button_for_joy_r36s_map():
+    assert button_for_joy(0) == "b"
+    assert button_for_joy(1) == "a"
+    assert button_for_joy(8) == "up"
+    assert button_for_joy(12) == "select"
+    assert button_for_joy(13) == "start"
+    assert button_for_joy(16) == "fn"
+    assert button_for_joy(15) is None
+
+
+def test_direction_for_axis():
+    assert direction_for_axis(1, -1.0) == "up"
+    assert direction_for_axis(1, 1.0) == "down"
+    assert direction_for_axis(0, -1.0) == "left"
+    assert direction_for_axis(0, 1.0) == "right"
+    assert direction_for_axis(1, 0.1) is None
+    assert direction_for_axis(3, 1.0) is None

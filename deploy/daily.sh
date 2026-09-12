@@ -10,17 +10,6 @@ export HOME="${HOME:-/home/ark}"
 export SDL_VIDEODRIVER="${SDL_VIDEODRIVER:-KMSDRM}"
 export SDL_VIDEO_KMSDRM_DEVICE="${SDL_VIDEO_KMSDRM_DEVICE:-/dev/dri/card0}"
 
-# The R36S has no keyboard; gptokeyb translates the gamepad into the keys
-# app/player/input.py expects (see daily.gptk).
-GPTOKEYB=/opt/system/Tools/PortMaster/gptokeyb
-if [ -x "$GPTOKEYB" ]; then
-  chmod 666 /dev/uinput 2>/dev/null
-  "$GPTOKEYB" python3 -c "$GAMEDIR/daily.gptk" >> "$GAMEDIR/run.log" 2>&1 &
-  GPTOKEYB_PID=$!
-fi
-
-python3 -m app.main >> "$GAMEDIR/run.log" 2>&1
-STATUS=$?
-
-[ -n "$GPTOKEYB_PID" ] && kill "$GPTOKEYB_PID" 2>/dev/null
-exit $STATUS
+# Gamepad input is read natively by pygame (see app/player/input.py JOYMAP);
+# no gptokeyb keyboard bridge needed.
+exec python3 -m app.main >> "$GAMEDIR/run.log" 2>&1
