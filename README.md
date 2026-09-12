@@ -51,12 +51,14 @@ bash deploy/install.sh            # pip install pygame==2.6.1 + mpv + SDL2 KMSDR
 # From the dev machine:
 tar czf - -C . app | ssh root@<ip> 'rm -rf /roms/ports/daily/app && tar xzf - -C /roms/ports/daily/'
 tar czf - -C testpackages full | ssh root@<ip> 'mkdir -p /roms/ports/daily/testpackages && tar xzf - -C /roms/ports/daily/testpackages/'
-scp deploy/config.json deploy/daily.sh root@<ip>:/roms/ports/daily/
+scp deploy/config.json deploy/daily.sh deploy/daily.gptk root@<ip>:/roms/ports/daily/
 ssh root@<ip> 'chmod +x /roms/ports/daily.sh'
 ```
 
 Launcher: `/roms/ports/daily.sh` (ES Ports entry) runs
-`python3 -m app.main` from `/roms/ports/daily/` on KMSDRM.
+`python3 -m app.main` from `/roms/ports/daily/` on KMSDRM. The R36S has no
+keyboard, so `gptokeyb` translates the GO-Super Gamepad into the keys
+`app/player/input.py` expects (mapping in `deploy/daily.gptk`).
 
 Device quirks found in M4:
 - pygame's bundled SDL2 2.28.4 lacks the KMSDRM video driver; `install.sh`
