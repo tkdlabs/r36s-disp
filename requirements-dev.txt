@@ -1,2 +1,4 @@
 -r requirements.txt
+-r server/requirements.txt
 pytest
+httpx
