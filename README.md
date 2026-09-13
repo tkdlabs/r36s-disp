@@ -33,8 +33,9 @@ uv pip install --python .venv/bin/python -r requirements-dev.txt
 ```
 
 `app.main` also accepts a `.zip`, `--no-video`, `--window 960x720`, and
-`--validate-only`. With no argument it looks for `data/current`, and falls
-back to the built-in "No edition yet" notice.
+`--validate-only`. With no argument it reads the `data/current` pointer file
+(written by sync, holding a package id) and resolves `data/packages/<id>`,
+falling back to the built-in "No edition yet" notice.
 
 Desktop controls: arrows = D-pad, Z/X = A/B, C/V = X/Y, Q/E = L1/R1,
 Enter = Start, Tab = Select, Esc/FN = quit.
@@ -95,6 +96,8 @@ Device quirks found in M4:
   repoints it at the system SDL2 (2.30), which has it. No X11 on ArkOS.
 - The R36S FN/hotkey is joystick button **16** (ES reports `system_hk` as
   15); `gptokeyb`/`oga_controls` don't see it, so input is read natively.
-- `/roms` is exfat with `symlink=0`, so the spec's `data/current` symlink
-  can't be used; M4 uses `data/current/` as a real directory (#10).
+- `/roms` is exfat with `symlink=0`, so a symlink can't represent the
+  installed edition. `data/current` is instead a text file holding the
+  `package_id`; `app.current` resolves it to `data/packages/<id>` and swaps it
+  with an atomic `os.replace` (#10).
 - ArkOS boots without an RTC; fix the clock before apt/pip (TLS).
