@@ -39,6 +39,34 @@ back to the built-in "No edition yet" notice.
 Desktop controls: arrows = D-pad, Z/X = A/B, C/V = X/Y, Q/E = L1/R1,
 Enter = Start, Tab = Select, Esc/FN = quit.
 
+## Server (desktop, M3)
+
+Publisher plus the two read-only endpoints from SPEC.md §4.1. The store lives
+under `server/store/` (gitignored): `packages/<package_id>.zip` and
+`devices/<device_id>.json`.
+
+```sh
+uv pip install --python .venv/bin/python -r server/requirements.txt
+
+# Validate a content dir, zip it, and point a device at it. Every run mints a
+# new package_id, so re-publishing is an intra-day revision (SPEC.md §4.2).
+.venv/bin/python -m server.publish testpackages/full \
+    --device r36s-01 --retention-days 7
+
+# Serve it on a configurable host/port.
+.venv/bin/uvicorn server.app:app --host 0.0.0.0 --port 8080
+```
+
+```sh
+curl http://<host>:8080/api/v1/devices/r36s-01/latest
+# {"package_id": "...", "date": "...", "url": "...", "sha256": "...", "size": ..., ...}
+
+curl -o edition.zip http://<host>:8080/api/v1/packages/<package_id>.zip
+sha256sum edition.zip   # must match "sha256" from latest
+```
+
+Unknown device → `204`. `X-Device-Token` is accepted and ignored (reserved).
+
 ## Device deploy (R36S, M4)
 
 Verified on ArkOS (RK3326, Ubuntu 19.10, Python 3.7.5), 2026-09-12. See
