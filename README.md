@@ -68,6 +68,21 @@ sha256sum edition.zip   # must match "sha256" from latest
 
 Unknown device → `204`. `X-Device-Token` is accepted and ignored (reserved).
 
+### Device sync client (SPEC.md §4.2)
+
+`app.sync` is the device half: it fetches `latest`, downloads and verifies the
+package, validates it, and atomically repoints `data/current`. It is stdlib
+only and never raises — failures land in `data/state.json`.
+
+```sh
+# config.json: {server_url, device_id, max_retention_days}
+.venv/bin/python -m app.sync path/to/config.json --data-dir path/to/data
+```
+
+`data_dir` defaults to `data/` next to the config. `max_retention_days`
+(default 7) caps whatever retention the server advertises; pruning is by
+package `date` and never removes `current`.
+
 ## Device deploy (R36S, M4)
 
 Verified on ArkOS (RK3326, Ubuntu 19.10, Python 3.7.5), 2026-09-12. See
