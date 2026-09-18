@@ -63,6 +63,22 @@ def test_player_navigation(canvas):
     assert player.stack.depth == 1
 
 
+def test_theme_uses_bundled_font(canvas):
+    from app.player import theme as theme_mod
+    assert os.path.isfile(theme_mod.FONT_PATH)
+    theme = theme_mod.Theme()
+    size = max(8, int(theme_mod.BASE_SIZES["body"] * theme.font_scale))
+    expected = pygame.font.Font(theme_mod.FONT_PATH, size)
+    assert theme.font("body").size("Hello, Wg") == expected.size("Hello, Wg")
+
+
+def test_theme_falls_back_when_font_missing(canvas, monkeypatch):
+    from app.player import theme as theme_mod
+    monkeypatch.setattr(theme_mod, "FONT_PATH", "/nonexistent/NotoSans.ttf")
+    font = theme_mod.Theme().font("body")
+    assert font.render("Hello", True, (255, 255, 255)).get_width() > 0
+
+
 def test_player_video_screen_is_pending(canvas):
     package = load_package(FULL)
     player = Player(package, no_video=True)

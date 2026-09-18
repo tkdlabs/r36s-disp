@@ -113,3 +113,10 @@ Device quirks found in M4:
   `package_id`; `app.current` resolves it to `data/packages/<id>` and swaps it
   with an atomic `os.replace` (#10).
 - ArkOS boots without an RTC; fix the clock before apt/pip (TLS).
+
+## Fonts
+
+The player bundles **Noto Sans** (`app/fonts/NotoSans-Regular.ttf`) under the
+SIL Open Font License 1.1 — Copyright 2022 The Noto Project Authors
+(https://github.com/notofonts/latin-greek-cyrillic). The full license text is
+in `app/fonts/LICENSE`.
