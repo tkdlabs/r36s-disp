@@ -4,8 +4,14 @@ Color values may be CSS-ish hex strings (``"#rrggbb"`` / ``"#rrggbbaa"``) or
 ``[r, g, b]`` / ``[r, g, b, a]`` sequences.
 """
 
+import os
+
 import pygame
 
+# Bundled font (OFL Noto Sans); falls back to pygame's default if missing.
+FONT_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "fonts", "NotoSans-Regular.ttf")
 
 DEFAULTS = {
     "bg": (18, 18, 22, 255),
@@ -89,5 +95,14 @@ class Theme:
         if role not in self._fonts:
             size = max(8, int(BASE_SIZES.get(role, BASE_SIZES["body"])
                               * self.font_scale))
-            self._fonts[role] = pygame.font.Font(None, size)
+            self._fonts[role] = _load_font(size)
         return self._fonts[role]
+
+
+def _load_font(size):
+    if os.path.isfile(FONT_PATH):
+        try:
+            return pygame.font.Font(FONT_PATH, size)
+        except (OSError, pygame.error):
+            pass
+    return pygame.font.Font(None, size)
