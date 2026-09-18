@@ -115,6 +115,59 @@ def test_video_available_plays_and_advances(canvas):
     assert player.state.sid == "menu"
 
 
+def test_main_runs_startup_sync_before_loading(monkeypatch, tmp_path):
+    import app.main as main_mod
+    import app.player.app as player_mod
+
+    order = []
+    booted = LoadedPackage.from_screens(
+        {"notice": {"type": "notice", "text": "booted"}}, "notice",
+        package={"id": "booted", "title": "Booted"})
+    monkeypatch.setattr(main_mod, "startup_sync",
+                        lambda cb: order.append("sync") or "synced booted")
+    monkeypatch.setattr(main_mod, "load_current",
+                        lambda data_dir: order.append("load") or booted)
+
+    captured = {}
+
+    class FakePlayer:
+        def __init__(self, package, **kwargs):
+            captured["package"] = package
+            captured["status"] = kwargs.get("status")
+
+        def run(self):
+            captured["ran"] = True
+
+    monkeypatch.setattr(player_mod, "Player", FakePlayer)
+
+    assert main_mod.main(["--data-dir", str(tmp_path)]) == 0
+    assert order == ["sync", "load"]
+    assert captured["package"] is booted
+    assert captured["status"] == "synced booted"
+    assert captured.get("ran") is True
+
+
+def test_main_explicit_package_skips_startup_sync(monkeypatch, tmp_path):
+    import app.main as main_mod
+    import app.player.app as player_mod
+
+    order = []
+    monkeypatch.setattr(main_mod, "startup_sync",
+                        lambda cb: order.append("sync") or "synced")
+
+    class FakePlayer:
+        def __init__(self, package, **kwargs):
+            self.package = package
+
+        def run(self):
+            order.append("run")
+
+    monkeypatch.setattr(player_mod, "Player", FakePlayer)
+
+    assert main_mod.main([FULL, "--data-dir", str(tmp_path)]) == 0
+    assert order == ["run"]
+
+
 def test_sync_reloads_newly_installed_package(canvas):
     package = load_package(FULL)
     new_package = LoadedPackage.from_screens(

@@ -25,7 +25,8 @@ DEFAULT_WINDOW = (960, 720)
 class Player:
     def __init__(self, package, window=None, no_video=False,
                  sync_callback=None, show_controls=False,
-                 controls_callback=None, reload_callback=None):
+                 controls_callback=None, reload_callback=None,
+                 status=""):
         self.package = package
         self.window_size = window or DEFAULT_WINDOW
         self.no_video = no_video
@@ -41,7 +42,7 @@ class Player:
         self.stack = NavigationStack(package.root)
         self.state = None
         self.running = False
-        self.status = ""
+        self.status = status
         self._overlay = "controls" if show_controls else None
 
         self._canvas = None
