@@ -24,11 +24,13 @@ DEFAULT_WINDOW = (960, 720)
 
 class Player:
     def __init__(self, package, window=None, no_video=False,
-                 sync_callback=None):
+                 sync_callback=None, show_controls=False,
+                 controls_callback=None):
         self.package = package
         self.window_size = window or DEFAULT_WINDOW
         self.no_video = no_video
         self.sync_callback = sync_callback
+        self.controls_callback = controls_callback
 
         self.theme = Theme(package.manifest.get("theme"))
         self.renderer = Renderer(package, self.theme)
@@ -39,6 +41,7 @@ class Player:
         self.state = None
         self.running = False
         self.status = ""
+        self._overlay = "controls" if show_controls else None
 
         self._canvas = None
         self._display = None
@@ -46,6 +49,7 @@ class Player:
         self._prev_canvas = None
         self._fade = None       # dict(t=..., duration=...)
         self._video_pending = False
+        self._video_blocked = False
         self._joy_dir = {}      # axis -> current direction from the stick
         self._joysticks = []    # keep refs: GC would close the device
 
@@ -88,22 +92,43 @@ class Player:
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
                     continue
-                button = button_for_key(_key_name(event.key))
-                if button:
-                    self._apply(self.state.resolve(button))
+                self._dispatch(button_for_key(_key_name(event.key)))
             elif event.type == pygame.JOYBUTTONDOWN:
                 _joy_debug("joy button %d" % event.button)
-                button = button_for_joy(event.button)
-                if button:
-                    self._apply(self.state.resolve(button))
+                self._dispatch(button_for_joy(event.button))
             elif event.type == pygame.JOYAXISMOTION:
                 button = direction_for_axis(event.axis, event.value)
                 # Fire once per push: only when the engaged direction changes.
                 if self._joy_dir.get(event.axis) != button:
                     self._joy_dir[event.axis] = button
                     _joy_debug("joy axis %d dir %s" % (event.axis, button))
-                    if button:
-                        self._apply(self.state.resolve(button))
+                    self._dispatch(button)
+
+    def _dispatch(self, button):
+        """Route a normalized button through overlays/video to an action."""
+        if not button:
+            return
+        if self._overlay:
+            self._dismiss_overlay()
+            return
+        if self._video_blocked:
+            self._apply(self._blocked_action(button))
+            return
+        self._apply(self.state.resolve(button))
+
+    def _dismiss_overlay(self):
+        self._overlay = None
+        if self.controls_callback:
+            try:
+                self.controls_callback()
+            except Exception as exc:  # marking first-run must never crash
+                _joy_debug("controls marker failed: %s" % exc)
+
+    def _blocked_action(self, button):
+        """While a video placeholder is shown, A/Start continues."""
+        if button in ("a", "start"):
+            return self.state.advance()
+        return self.state.resolve(button)
 
     def _step(self, dt):
         if not self.running:
@@ -111,9 +136,13 @@ class Player:
         if self._video_pending:
             self._video_pending = False
             self.audio.stop()
-            self.video.play(self.package.asset(self.state.screen["video"]),
-                            self.state.screen["video"])
-            self._apply(self.state.advance())
+            if self.video.available():
+                self.video.play(self.package.asset(self.state.screen["video"]),
+                                self.state.screen["video"])
+                self._apply(self.state.advance())
+            else:
+                # No mpv: hold on a placeholder until A (SPEC.md §3.3 / #7).
+                self._video_blocked = True
             return
 
         action = self.state.tick(dt)
@@ -138,6 +167,7 @@ class Player:
                 self._fade = None
 
         self.state = ScreenState(self.package, sid)
+        self._video_blocked = False
         self.audio.stop()
         audio = self.state.audio
         if audio:
@@ -199,7 +229,13 @@ class Player:
                 self._prev_canvas = None
 
     def _render(self):
-        self.renderer.draw(self._canvas, self.state, footer=self._footer())
+        footer = self._footer()
+        if self._video_blocked:
+            self.renderer.video_unavailable(self._canvas, footer=footer)
+        else:
+            self.renderer.draw(self._canvas, self.state, footer=footer)
+        if self._overlay:
+            self.renderer.controls_overlay(self._canvas)
 
         frame = self._canvas
         if self._fade and self._prev_canvas is not None:

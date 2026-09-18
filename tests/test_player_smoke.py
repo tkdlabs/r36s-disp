@@ -85,3 +85,52 @@ def test_player_video_screen_is_pending(canvas):
     player._canvas = canvas
     player._enter("video")
     assert player._video_pending is True
+
+
+def test_video_unavailable_waits_for_a(canvas):
+    package = load_package(FULL)
+    player = Player(package, no_video=True)
+    player._canvas = canvas
+    player.running = True
+    player._enter("video")
+    player._step(0.016)
+    assert player._video_blocked is True
+    assert player.state.sid == "video"
+    player._dispatch("a")
+    assert player._video_blocked is False
+    assert player.state.sid == "menu"
+
+
+def test_video_available_plays_and_advances(canvas):
+    package = load_package(FULL)
+    player = Player(package, no_video=False)
+    played = []
+    player.video._which = lambda name: "/usr/bin/mpv"
+    player.video._runner = lambda argv: played.append(argv) or 0
+    player.running = True
+    player._enter("video")
+    player._step(0.016)
+    assert played
+    assert player._video_blocked is False
+    assert player.state.sid == "menu"
+
+
+def test_controls_overlay_dismissed_by_input(canvas):
+    package = load_package(FULL)
+    marked = []
+    player = Player(package, show_controls=True,
+                    controls_callback=lambda: marked.append(True))
+    player._canvas = canvas
+    player._enter("intro")
+    assert player._overlay == "controls"
+    player._dispatch("up")
+    assert player._overlay is None
+    assert player.state.sid == "intro"
+    assert marked == [True]
+
+
+def test_render_overlays(canvas):
+    package = load_package(FULL)
+    renderer = Renderer(package, Theme())
+    renderer.controls_overlay(canvas)
+    renderer.video_unavailable(canvas, footer="test")

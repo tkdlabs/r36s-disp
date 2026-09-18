@@ -17,6 +17,17 @@ FOOTER_H = 26
 ITEM_H = 50
 SLIDE_DOT_R = 5
 
+# Desktop key -> spec button (SPEC.md §3.4). Shown once on first run.
+CONTROL_HINTS = (
+    ("Arrows", "D-pad"),
+    ("Z / X", "A / B"),
+    ("C / V", "X / Y"),
+    ("Q / E", "L1 / R1"),
+    ("Enter", "Start"),
+    ("R-Shift / Tab", "Select (sync)"),
+    ("Esc", "Quit"),
+)
+
 
 def wrap_text(font, text, max_width):
     """Greedy word-wrap returning a list of lines (never empty)."""
@@ -250,6 +261,51 @@ class Renderer:
         self._draw_title(canvas, "Video")
         self.message(canvas, "Playing %s ..." % state.screen.get("video"),
                      y=HEIGHT // 2)
+
+    def video_unavailable(self, canvas, footer=None):
+        """Placeholder shown when mpv can't play a video screen (#7)."""
+        canvas.fill(self.theme.bg)
+        self._draw_title(canvas, "Video unavailable")
+        self.message(canvas, "mpv is not installed.\n\nPress A to continue.",
+                     y=HEIGHT // 2)
+        if footer:
+            self._draw_footer(canvas, footer)
+
+    # -- overlays --------------------------------------------------------
+
+    def controls_overlay(self, canvas):
+        """First-run key-map overlay drawn over the current screen (#7)."""
+        scrim = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+        scrim.fill((0, 0, 0, 200))
+        canvas.blit(scrim, (0, 0))
+
+        title_font = self.theme.font("subtitle")
+        body_font = self.theme.font("detail")
+        line_h = body_font.get_linesize()
+        title_h = title_font.get_height()
+        hint_h = body_font.get_height()
+        panel_w = 380
+        panel_h = (20 + title_h + 12 + len(CONTROL_HINTS) * line_h
+                   + 10 + hint_h + 18)
+        panel = pygame.Rect(0, 0, panel_w, panel_h)
+        panel.center = (WIDTH // 2, HEIGHT // 2)
+        pygame.draw.rect(canvas, self.theme.bg, panel, border_radius=10)
+        pygame.draw.rect(canvas, self.theme.accent, panel, width=2,
+                         border_radius=10)
+
+        header = title_font.render("Controls", True, self.theme.fg)
+        canvas.blit(header, header.get_rect(
+            midtop=(WIDTH // 2, panel.top + 18)))
+        y = panel.top + 18 + title_h + 12
+        for key, action in CONTROL_HINTS:
+            canvas.blit(body_font.render(key, True, self.theme.accent),
+                        (panel.left + 24, y))
+            label = body_font.render(action, True, self.theme.fg)
+            canvas.blit(label, (panel.right - 24 - label.get_width(), y))
+            y += line_h
+        hint = body_font.render("Press any button", True, self.theme.muted)
+        canvas.blit(hint, hint.get_rect(
+            midbottom=(WIDTH // 2, panel.bottom - 10)))
 
     # -- fallbacks -------------------------------------------------------
 

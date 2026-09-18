@@ -21,6 +21,7 @@ KEYMAP = {
     "return": "start",
     "kp_enter": "start",
     "tab": "select",
+    "right shift": "select",
     "escape": "fn",
     "space": "a",
 }
