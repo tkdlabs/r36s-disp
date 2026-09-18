@@ -38,7 +38,8 @@ uv pip install --python .venv/bin/python -r requirements-dev.txt
 falling back to the built-in "No edition yet" notice.
 
 Desktop controls: arrows = D-pad, Z/X = A/B, C/V = X/Y, Q/E = L1/R1,
-Enter = Start, Tab = Select, Esc/FN = quit.
+Enter = Start, Right-Shift/Tab = Select, Esc/FN = quit. The player shows this
+key map once on first run (dismiss with any button); later launches skip it.
 
 ## Server (desktop, M3)
 

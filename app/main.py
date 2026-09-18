@@ -17,6 +17,7 @@ import os
 import sys
 
 from app.current import resolve_current
+from app.firstrun import controls_seen, mark_controls_seen
 from app.manifest import LoadedPackage, PackageError, load_package
 from app.validate import validate_package
 
@@ -78,6 +79,13 @@ def resolve_path(path, data_dir="data"):
     return resolve_current(data_dir)
 
 
+def default_data_dir(config_path=None):
+    """The data dir sync uses: ``data/`` next to the sync config."""
+    if config_path is None:
+        config_path = "config.json"
+    return os.path.join(os.path.dirname(os.path.abspath(config_path)), "data")
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="app.main")
     parser.add_argument("package", nargs="?",
@@ -105,7 +113,8 @@ def main(argv=None):
         print("OK")
         return 0
 
-    path = resolve_path(args.package)
+    data_dir = args.data_dir or default_data_dir(args.config)
+    path = resolve_path(args.package, data_dir)
     if path is None:
         package = builtin_package("No edition yet - press Select to sync")
     else:
@@ -130,7 +139,9 @@ def main(argv=None):
 
     from app.player.app import Player
     Player(package, window=args.window, no_video=args.no_video,
-           sync_callback=make_sync_callback(args.config, args.data_dir)).run()
+           sync_callback=make_sync_callback(args.config, data_dir),
+           show_controls=not controls_seen(data_dir),
+           controls_callback=lambda: mark_controls_seen(data_dir)).run()
     return 0
 
 

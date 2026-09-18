@@ -133,6 +133,8 @@ def test_button_for_key():
     assert button_for_key("Up") == "up"
     assert button_for_key("z") == "a"
     assert button_for_key("RETURN") == "start"
+    assert button_for_key("right shift") == "select"
+    assert button_for_key("tab") == "select"
     assert button_for_key("f1") is None
     assert button_for_key(None) is None
 
