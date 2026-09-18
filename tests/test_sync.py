@@ -11,6 +11,7 @@ import pytest
 import uvicorn
 
 from app.current import packages_dir, read_current, resolve_current, write_current
+from app.main import _sync_summary, make_sync_callback
 from app.sync import main, sync
 from server.app import create_app
 from server.publish import publish_package
@@ -330,3 +331,73 @@ def test_cli_entry_point(tmp_path, env):
 
     assert rc == 0
     assert read_current(data_dir) is not None
+
+
+def test_sync_summary_mappings():
+    assert _sync_summary({"status": "installed",
+                          "package_id": "x-2026-09-03-0001"}) == \
+        "synced x-2026-09-03-0001"
+    assert _sync_summary({"status": "up-to-date"}) == "already up to date"
+    assert _sync_summary({"status": "no-package"}) == "nothing to sync"
+    assert _sync_summary({"status": "error", "error": "boom"}) == \
+        "sync failed: boom"
+    assert _sync_summary({"status": "error"}) == "sync failed: unknown error"
+
+
+def test_player_sync_callback_installs_and_summarizes(tmp_path, env):
+    url, store = env
+    record = publish(store, "full")
+    config = write_config(tmp_path, url)
+    data_dir = str(tmp_path / "data")
+
+    callback = make_sync_callback(config, data_dir)
+    assert callback is not None
+    summary = callback()
+
+    assert summary == "synced %s" % record["package_id"]
+    assert read_current(data_dir) == record["package_id"]
+
+
+def test_player_sync_callback_second_call_is_up_to_date(tmp_path, env):
+    url, store = env
+    publish(store, "full")
+    config = write_config(tmp_path, url)
+    data_dir = str(tmp_path / "data")
+
+    callback = make_sync_callback(config, data_dir)
+
+    assert "synced" in callback()
+    assert callback() == "already up to date"
+
+
+def test_player_sync_callback_no_package(tmp_path, env):
+    url, _store = env
+    data_dir = str(tmp_path / "data")
+    callback = make_sync_callback(write_config(tmp_path, url), data_dir)
+
+    assert callback() == "nothing to sync"
+
+
+def test_player_sync_callback_error_summary(tmp_path, env):
+    url, store = env
+    publish(store, "full")
+    config = write_config(tmp_path, url)
+    data_dir = str(tmp_path / "data")
+    callback = make_sync_callback(config, data_dir)
+    assert "synced" in callback()
+
+    second = publish(store, "minimal")
+    assert second["package_id"]
+    with open(os.path.join(store, "devices", "dev-1.json"),
+              encoding="utf-8") as fh:
+        record = json.load(fh)
+    record["sha256"] = "0" * 64
+    write_record(store, record)
+
+    summary = callback()
+    assert summary.startswith("sync failed: sha256 mismatch")
+    assert read_current(data_dir) != second["package_id"]
+
+
+def test_player_sync_callback_without_config_is_none(tmp_path):
+    assert make_sync_callback(str(tmp_path / "missing.json")) is None
