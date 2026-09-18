@@ -14,6 +14,13 @@ export SDL_VIDEO_KMSDRM_DEVICE="${SDL_VIDEO_KMSDRM_DEVICE:-/dev/dri/card0}"
 # no gptokeyb keyboard bridge needed.
 python3 -m app.main >> "$GAMEDIR/run.log" 2>&1
 
+# The r8188eus USB radio drops and ES can leave WiFi "off" (rfkill-blocked,
+# NM networking disabled) after the restart below. Re-enable the radio the
+# same way Wifi.sh ToggleWifi 'On' does; NM reconnects the saved SSID on its
+# own. Best-effort: never block or fail the launcher (#25).
+rfkill unblock wlan 2>/dev/null || true
+nmcli n on 2>/dev/null || true
+
 # Our KMSDRM app takes the DRM master away from ES, which does not repaint
 # when we exit (blank screen). Queue an ES restart from systemd (pid 1 does
 # the work even though this script is in ES's cgroup and gets torn down).
