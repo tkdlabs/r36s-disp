@@ -14,6 +14,8 @@
 set -euo pipefail
 
 GAMEDIR=/roms/ports/daily
+# ES runs the port entry from /roms/ports/, not GAMEDIR (see gamelist.xml).
+PORTSCRIPT=/roms/ports/daily.sh
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 WLAN_MAC="${R36S_WLAN_MAC:-00:e0:5c:06:45:54}"
 
@@ -104,10 +106,12 @@ if [ "$TESTPKGS" = 1 ]; then
          tar --no-same-owner -xzf - -C $GAMEDIR/testpackages"
 fi
 
-echo "== config.json + daily.sh =="
+echo "== config.json + launcher =="
 scp -o LogLevel=ERROR -o BatchMode=yes \
-    "$ROOT"/deploy/config.json "$ROOT"/deploy/daily.sh root@"$HOST":$GAMEDIR/
-SSH "chmod +x $GAMEDIR/daily.sh"
+    "$ROOT"/deploy/config.json root@"$HOST":$GAMEDIR/
+scp -o LogLevel=ERROR -o BatchMode=yes \
+    "$ROOT"/deploy/daily.sh root@"$HOST":$PORTSCRIPT
+SSH "chmod +x $PORTSCRIPT; rm -f $GAMEDIR/daily.sh"
 
 echo "== verify =="
 PYCHECK="import app, app.player, app.sync; print('import ok')"
