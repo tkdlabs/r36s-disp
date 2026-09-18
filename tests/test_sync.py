@@ -15,6 +15,7 @@ from app.main import (
     _sync_summary,
     make_reload_callback,
     make_sync_callback,
+    startup_sync,
 )
 from app.sync import main, sync
 from server.app import create_app
@@ -401,6 +402,68 @@ def test_player_sync_callback_error_summary(tmp_path, env):
     summary = callback()
     assert summary.startswith("sync failed: sha256 mismatch")
     assert read_current(data_dir) != second["package_id"]
+
+
+def test_startup_sync_without_config_is_blank(tmp_path):
+    assert startup_sync(make_sync_callback(str(tmp_path / "missing.json"))) == ""
+
+
+def test_startup_sync_installs_on_boot(tmp_path, env):
+    url, store = env
+    record = publish(store, "full")
+    config = write_config(tmp_path, url)
+    data_dir = str(tmp_path / "data")
+
+    status = startup_sync(make_sync_callback(config, data_dir))
+
+    assert status == "synced %s" % record["package_id"]
+    assert read_current(data_dir) == record["package_id"]
+
+
+def test_startup_sync_reports_up_to_date(tmp_path, env):
+    url, store = env
+    publish(store, "full")
+    config = write_config(tmp_path, url)
+    data_dir = str(tmp_path / "data")
+    startup_sync(make_sync_callback(config, data_dir))
+
+    assert startup_sync(make_sync_callback(config, data_dir)) == \
+        "already up to date"
+
+
+def test_startup_sync_reports_no_package(tmp_path, env):
+    url, _store = env
+    config = write_config(tmp_path, url)
+    data_dir = str(tmp_path / "data")
+
+    assert startup_sync(make_sync_callback(config, data_dir)) == \
+        "nothing to sync"
+
+
+def test_startup_sync_summarizes_error(tmp_path, env):
+    url, store = env
+    publish(store, "full")
+    config = write_config(tmp_path, url)
+    data_dir = str(tmp_path / "data")
+    callback = make_sync_callback(config, data_dir)
+    startup_sync(callback)
+
+    second = publish(store, "minimal")
+    assert second["package_id"]
+    with open(os.path.join(store, "devices", "dev-1.json"),
+              encoding="utf-8") as fh:
+        record = json.load(fh)
+    record["sha256"] = "0" * 64
+    write_record(store, record)
+
+    assert startup_sync(callback).startswith("sync failed: sha256 mismatch")
+
+
+def test_startup_sync_never_raises():
+    def boom():
+        raise RuntimeError("kaboom")
+
+    assert startup_sync(boom) == "sync failed: kaboom"
 
 
 def test_reload_callback_reflects_installed_edition(tmp_path, env):

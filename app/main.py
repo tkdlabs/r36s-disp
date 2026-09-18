@@ -44,6 +44,21 @@ def make_sync_callback(config_path=None, data_dir=None):
     return _callback
 
 
+def startup_sync(sync_callback):
+    """Run the boot sync once (SPEC.md §4.2); never raises.
+
+    Startup sync is best-effort and offline-first: any failure is reduced to
+    the same footer status the Select button shows. ``None`` (no config) keeps
+    the footer clean. Returns the status string to seed the player with.
+    """
+    if sync_callback is None:
+        return ""
+    try:
+        return sync_callback() or ""
+    except Exception as exc:  # a sync failure must never block startup
+        return "sync failed: %s" % exc
+
+
 def make_reload_callback(data_dir=None):
     """Build the post-sync reload callback for the player.
 
@@ -153,7 +168,10 @@ def main(argv=None):
         return 0
 
     data_dir = args.data_dir or default_data_dir(args.config)
+    sync_callback = make_sync_callback(args.config, data_dir)
+    status = ""
     if args.package:
+        # Explicit package (desktop/debug): load it strictly, never sync.
         errors = validate_package(args.package)
         if errors:
             for err in errors:
@@ -165,14 +183,18 @@ def main(argv=None):
             print("cannot load package: %s" % exc, file=sys.stderr)
             return 1
     else:
+        # Boot trigger (SPEC.md §4.2): sync before resolving data/current so a
+        # stale pointer is refreshed on launch, best-effort and non-blocking.
+        status = startup_sync(sync_callback)
         package = load_current(data_dir)
 
     from app.player.app import Player
     Player(package, window=args.window, no_video=args.no_video,
-           sync_callback=make_sync_callback(args.config, data_dir),
+           sync_callback=sync_callback,
            show_controls=not controls_seen(data_dir),
            controls_callback=lambda: mark_controls_seen(data_dir),
-           reload_callback=make_reload_callback(data_dir)).run()
+           reload_callback=make_reload_callback(data_dir),
+           status=status).run()
     return 0
 
 
