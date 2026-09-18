@@ -1,4 +1,5 @@
 import os
+import shutil
 
 import pytest
 
@@ -9,7 +10,10 @@ from app.current import (
     resolve_current,
     write_current,
 )
-from app.main import resolve_path
+from app.main import load_current, make_reload_callback, resolve_path
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FULL = os.path.join(ROOT, "testpackages", "full")
 
 
 def _install(data_dir, package_id):
@@ -108,3 +112,26 @@ def test_resolve_path_uses_pointer(tmp_path):
 
 def test_resolve_path_none_when_no_pointer(tmp_path):
     assert resolve_path(None, str(tmp_path)) is None
+
+
+def test_load_current_none_falls_back_to_builtin(tmp_path):
+    package = load_current(str(tmp_path))
+    assert package.package_id == "builtin"
+    assert "notice" in package.screens
+
+
+def test_load_current_loads_installed_pointer(tmp_path):
+    data_dir = str(tmp_path)
+    shutil.copytree(FULL, os.path.join(packages_dir(data_dir), "full-0001"))
+    write_current(data_dir, "full-0001")
+    assert load_current(data_dir).package_id == "full-0001"
+
+
+def test_reload_callback_reads_pointer(tmp_path):
+    data_dir = str(tmp_path)
+    reload = make_reload_callback(data_dir)
+    assert reload().package_id == "builtin"
+
+    shutil.copytree(FULL, os.path.join(packages_dir(data_dir), "full-0001"))
+    write_current(data_dir, "full-0001")
+    assert reload().package_id == "full-0001"
