@@ -13,6 +13,7 @@ Stdlib only, Python 3.8+.
 import os
 import re
 import tempfile
+import time
 
 CURRENT_NAME = "current"
 PACKAGES_NAME = "packages"
@@ -67,11 +68,18 @@ def write_current(data_dir, package_id):
         raise ValueError("invalid package_id: %r" % (package_id,))
 
     os.makedirs(data_dir, exist_ok=True)
+    target = current_pointer(data_dir)
+    # Migration (#27): builds before the pointer-file layout kept the installed
+    # edition as a directory at ``current``; os.replace can't overwrite one.
+    # Park it aside (never delete) so the pointer can be written.
+    if os.path.isdir(target):
+        backup = target + ".stale-%d" % int(time.time())
+        os.rename(target, backup)
     fd, tmp = tempfile.mkstemp(prefix=".current-", suffix=".tmp", dir=data_dir)
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as fh:
             fh.write(package_id + "\n")
-        os.replace(tmp, current_pointer(data_dir))
+        os.replace(tmp, target)
     except BaseException:
         try:
             os.unlink(tmp)

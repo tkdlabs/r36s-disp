@@ -79,6 +79,23 @@ def test_resolve_ignores_directory_in_pointer_slot(tmp_path):
     assert resolve_current(str(tmp_path)) is None
 
 
+def test_write_migrates_stale_directory_in_pointer_slot(tmp_path):
+    stale = current_pointer(str(tmp_path))
+    os.makedirs(os.path.join(stale, "assets"))
+    with open(os.path.join(stale, "manifest.json"), "w") as fh:
+        fh.write("{}")
+
+    write_current(str(tmp_path), "full-0001")
+
+    assert read_current(str(tmp_path)) == "full-0001"
+    assert os.path.isfile(current_pointer(str(tmp_path)))
+    parked = [n for n in os.listdir(str(tmp_path))
+              if n.startswith("current.stale-")]
+    assert len(parked) == 1
+    assert os.path.isfile(
+        os.path.join(str(tmp_path), parked[0], "manifest.json"))
+
+
 def test_resolve_path_prefers_explicit(tmp_path):
     assert resolve_path("/some/explicit", str(tmp_path)) == "/some/explicit"
 
