@@ -89,14 +89,11 @@ Verified on ArkOS (RK3326, Ubuntu 19.10, Python 3.7.5), 2026-09-12. See
 also `../r36s/DEPLOYMENT.md` and `../r36s/BOOTSTRAP.md`.
 
 ```sh
-# On the device (as root), once:
-bash deploy/install.sh            # pip install pygame==2.6.1 + mpv + SDL2 KMSDRM shim
-
-# From the dev machine:
-tar czf - -C . app | ssh root@<ip> 'rm -rf /roms/ports/daily/app && tar xzf - -C /roms/ports/daily/'
-tar czf - -C testpackages full | ssh root@<ip> 'mkdir -p /roms/ports/daily/testpackages && tar xzf - -C /roms/ports/daily/testpackages/'
-scp deploy/config.json deploy/daily.sh root@<ip>:/roms/ports/daily/
-ssh root@<ip> 'chmod +x /roms/ports/daily.sh'
+# One-time setup, then every code/config change:
+./deploy/deploy.sh --host <ip> --install    # setup: pygame + mpv + SDL2 KMSDRM shim
+./deploy/deploy.sh --host <ip>              # app/ + testpackages/full + launcher
+./deploy/deploy.sh --find                   # ARP-scan for the device when its
+                                            # DHCP IP changed (or R36S_HOST=<ip>)
 ```
 
 Launcher: `/roms/ports/daily.sh` (ES Ports entry) runs
