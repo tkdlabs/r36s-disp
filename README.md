@@ -55,14 +55,14 @@ uv pip install --python .venv/bin/python -r server/requirements.txt
     --device r36s-01 --retention-days 7
 
 # Serve it on a configurable host/port.
-.venv/bin/uvicorn server.app:app --host 0.0.0.0 --port 8080
+.venv/bin/uvicorn server.app:app --host 0.0.0.0 --port 8001
 ```
 
 ```sh
-curl http://<host>:8080/api/v1/devices/r36s-01/latest
+curl http://<host>:8001/api/v1/devices/r36s-01/latest
 # {"package_id": "...", "date": "...", "url": "...", "sha256": "...", "size": ..., ...}
 
-curl -o edition.zip http://<host>:8080/api/v1/packages/<package_id>.zip
+curl -o edition.zip http://<host>:8001/api/v1/packages/<package_id>.zip
 sha256sum edition.zip   # must match "sha256" from latest
 ```
 

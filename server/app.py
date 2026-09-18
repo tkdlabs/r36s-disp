@@ -3,7 +3,7 @@
 Build with :func:`create_app` (used by tests against a temp store) or run the
 module-level ``app`` under uvicorn:
 
-    uvicorn server.app:app --host 0.0.0.0 --port 8080
+    uvicorn server.app:app --host 0.0.0.0 --port 8001
 
 Serving is plain HTTP over the LAN. Auth is reserved: the ``X-Device-Token``
 header is accepted and ignored (SPEC.md §4.1).
