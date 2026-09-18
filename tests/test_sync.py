@@ -11,7 +11,11 @@ import pytest
 import uvicorn
 
 from app.current import packages_dir, read_current, resolve_current, write_current
-from app.main import _sync_summary, make_sync_callback
+from app.main import (
+    _sync_summary,
+    make_reload_callback,
+    make_sync_callback,
+)
 from app.sync import main, sync
 from server.app import create_app
 from server.publish import publish_package
@@ -397,6 +401,20 @@ def test_player_sync_callback_error_summary(tmp_path, env):
     summary = callback()
     assert summary.startswith("sync failed: sha256 mismatch")
     assert read_current(data_dir) != second["package_id"]
+
+
+def test_reload_callback_reflects_installed_edition(tmp_path, env):
+    url, store = env
+    record = publish(store, "full")
+    config = write_config(tmp_path, url)
+    data_dir = str(tmp_path / "data")
+
+    reload = make_reload_callback(data_dir)
+    assert reload().package_id == "builtin"
+
+    make_sync_callback(config, data_dir)()
+    assert record["package_id"]
+    assert reload().source == resolve_current(data_dir)
 
 
 def test_player_sync_callback_without_config_is_none(tmp_path):

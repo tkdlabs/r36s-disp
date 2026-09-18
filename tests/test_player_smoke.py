@@ -115,6 +115,59 @@ def test_video_available_plays_and_advances(canvas):
     assert player.state.sid == "menu"
 
 
+def test_sync_reloads_newly_installed_package(canvas):
+    package = load_package(FULL)
+    new_package = LoadedPackage.from_screens(
+        {"start": {"type": "notice", "text": "new edition"}}, "start",
+        package={"id": "full-0002", "title": "New edition"})
+    player = Player(package, no_video=True,
+                    sync_callback=lambda: "synced full-0002",
+                    reload_callback=lambda: new_package)
+    player._canvas = canvas
+    old_renderer = player.renderer
+    player._enter("menu")
+
+    player._do_sync()
+
+    assert player.status == "synced full-0002"
+    assert player.package is new_package
+    assert player.renderer is not old_renderer
+    assert player.stack.root == "start"
+    assert player.state.sid == "start"
+
+
+def test_sync_keeps_package_when_unchanged(canvas):
+    package = load_package(FULL)
+    player = Player(package, no_video=True,
+                    sync_callback=lambda: "already up to date",
+                    reload_callback=lambda: load_package(FULL))
+    player._canvas = canvas
+    player._enter("menu")
+
+    player._do_sync()
+
+    assert player.package is package
+    assert player.state.sid == "menu"
+
+
+def test_sync_survives_reload_failure(canvas):
+    package = load_package(FULL)
+
+    def boom():
+        raise RuntimeError("disk gone")
+
+    player = Player(package, no_video=True,
+                    sync_callback=lambda: "synced full-0002",
+                    reload_callback=boom)
+    player._canvas = canvas
+    player._enter("menu")
+
+    player._do_sync()
+
+    assert player.package is package
+    assert player.state.sid == "menu"
+
+
 def test_controls_overlay_dismissed_by_input(canvas):
     package = load_package(FULL)
     marked = []

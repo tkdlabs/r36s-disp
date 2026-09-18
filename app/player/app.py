@@ -25,12 +25,13 @@ DEFAULT_WINDOW = (960, 720)
 class Player:
     def __init__(self, package, window=None, no_video=False,
                  sync_callback=None, show_controls=False,
-                 controls_callback=None):
+                 controls_callback=None, reload_callback=None):
         self.package = package
         self.window_size = window or DEFAULT_WINDOW
         self.no_video = no_video
         self.sync_callback = sync_callback
         self.controls_callback = controls_callback
+        self.reload_callback = reload_callback
 
         self.theme = Theme(package.manifest.get("theme"))
         self.renderer = Renderer(package, self.theme)
@@ -218,6 +219,34 @@ class Player:
                 self.status = "sync failed: %s" % exc
         else:
             self.status = "sync unavailable in this build"
+        self._refresh_package()
+
+    def _refresh_package(self):
+        """Swap in a newly installed edition after sync (SPEC.md §4.2).
+
+        Sync repoints ``data/current`` but the player holds the old package in
+        memory; without reloading, a successful sync never reaches the screen.
+        The resolved install path identifies the edition (the server mints its
+        own ``package_id``, so manifest ids repeat across republications), and
+        an unchanged path leaves navigation untouched. Failures keep the
+        current package.
+        """
+        if self.reload_callback is None:
+            return
+        try:
+            package = self.reload_callback()
+        except Exception as exc:  # a bad reload must never kill the player
+            _joy_debug("package reload failed: %s" % exc)
+            return
+        if package is None or package.source == self.package.source:
+            return
+        self.package = package
+        self.theme = Theme(package.manifest.get("theme"))
+        self.renderer = Renderer(package, self.theme)
+        self.stack = NavigationStack(package.root)
+        self._overlay = None
+        self._video_blocked = False
+        self._enter(self.stack.current)
 
     # -- rendering -------------------------------------------------------
 

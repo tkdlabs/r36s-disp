@@ -44,6 +44,45 @@ def make_sync_callback(config_path=None, data_dir=None):
     return _callback
 
 
+def make_reload_callback(data_dir=None):
+    """Build the post-sync reload callback for the player.
+
+    Sync installs a package and repoints ``data/current`` behind the running
+    player's back, so after a successful sync the player asks this to load the
+    edition now on disk. Returns a zero-arg callable that always yields a
+    package, falling back to a built-in notice when ``current`` is missing or
+    invalid — mirroring :func:`app.main.main`.
+    """
+    if data_dir is None:
+        data_dir = default_data_dir()
+
+    def _reload():
+        return load_current(data_dir)
+
+    return _reload
+
+
+def load_current(data_dir):
+    """Load the package ``data/current`` names, or a built-in notice.
+
+    Uses the same validation/error fallbacks as :func:`main` so a bad install
+    surfaces as an on-screen message instead of an exception.
+    """
+    path = resolve_current(data_dir)
+    if path is None:
+        return builtin_package("No edition yet - press Select to sync")
+    errors = validate_package(path)
+    if errors:
+        return builtin_package(
+            "Cannot play package: %s" % "; ".join(errors[:3]),
+            package_id="invalid")
+    try:
+        return load_package(path)
+    except PackageError as exc:
+        return builtin_package("Cannot load package: %s" % exc,
+                               package_id="error")
+
+
 def _sync_summary(state):
     """Turn a ``sync()`` state dict into the one-line footer status."""
     status = state.get("status")
@@ -114,34 +153,26 @@ def main(argv=None):
         return 0
 
     data_dir = args.data_dir or default_data_dir(args.config)
-    path = resolve_path(args.package, data_dir)
-    if path is None:
-        package = builtin_package("No edition yet - press Select to sync")
-    else:
-        errors = validate_package(path)
+    if args.package:
+        errors = validate_package(args.package)
         if errors:
-            if args.package:
-                for err in errors:
-                    print(err, file=sys.stderr)
-                return 1
-            package = builtin_package(
-                "Cannot play package: %s" % "; ".join(errors[:3]),
-                package_id="invalid")
-        else:
-            try:
-                package = load_package(path)
-            except PackageError as exc:
-                if args.package:
-                    print("cannot load package: %s" % exc, file=sys.stderr)
-                    return 1
-                package = builtin_package("Cannot load package: %s" % exc,
-                                          package_id="error")
+            for err in errors:
+                print(err, file=sys.stderr)
+            return 1
+        try:
+            package = load_package(args.package)
+        except PackageError as exc:
+            print("cannot load package: %s" % exc, file=sys.stderr)
+            return 1
+    else:
+        package = load_current(data_dir)
 
     from app.player.app import Player
     Player(package, window=args.window, no_video=args.no_video,
            sync_callback=make_sync_callback(args.config, data_dir),
            show_controls=not controls_seen(data_dir),
-           controls_callback=lambda: mark_controls_seen(data_dir)).run()
+           controls_callback=lambda: mark_controls_seen(data_dir),
+           reload_callback=make_reload_callback(data_dir)).run()
     return 0
 
 
